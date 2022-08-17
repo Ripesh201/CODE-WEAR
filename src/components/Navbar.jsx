@@ -3,12 +3,13 @@ import { Link } from "react-router-dom"
 import Refcon from '../context/Refcontext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Dbcon from '../context/Dbcon';
 // navbar login button click btn ...............
 const Navbar = () => {
   const [data, setdata] = useState({ fname: "", lname: "", email: "", pass: "", cpass: "" })
 
   const refcon = useContext(Refcon)
-  let { reflog, refreg, refsignup, refclose, refclosein, refsignin } = refcon
+  let { reflog, refreg, refsignup, refclose, refclosein, refsignin,reload,setreload } = refcon
   const showModal = () => {
     reflog.current.click()
   };
@@ -35,7 +36,9 @@ const Navbar = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "auth-token":localStorage.getItem("token")
+
       },
       body: JSON.stringify({ fname, lname, email, pass, cpass })
     })
@@ -44,8 +47,10 @@ const Navbar = () => {
       console.log("sign up done.!");
       setdata({ fname: "", lname: "", email: "", pass: "", cpass: "" })
       refclose.current.click()
-      
+
       localStorage.setItem("token", token)
+      getcontact()
+      setreload({})
 
     }
     else {
@@ -68,6 +73,9 @@ const Navbar = () => {
 
   // sign in
 
+  const condb = useContext(Dbcon)
+  let { getcontact } = condb
+
   const [data2, setData2] = useState({ email: "", pass: "" })
   const subHandler2 = async (e) => {
     e.preventDefault();
@@ -77,7 +85,8 @@ const Navbar = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "auth-token":localStorage.getItem("token")
       },
       body: JSON.stringify({ email, pass })
     })
@@ -85,7 +94,11 @@ const Navbar = () => {
     if (res.status === 200) {
       localStorage.setItem("token", token)
       setData2({ email: "", pass: "" })
+
       refclosein.current.click()
+
+      getcontact()
+      setreload({})
 
     }
     else {
@@ -120,6 +133,14 @@ const Navbar = () => {
     refsignin.current.click()
   }
 
+  // logout
+  const logoutHandler = () => {
+    localStorage.removeItem("token")
+    setreload({})
+  }
+  const changepassHandler = () => {
+
+  }
   return (
     <div>
       <nav className="navbar navbar-expand-lg bg-white py-2 shadow-sm">
@@ -146,12 +167,30 @@ const Navbar = () => {
 
             </ul>
             <div classNameName="buttons">
-              <button onClick={showModal} id="btn1" className="btn btn-outline-dark">
-                <i className="fa fa-sign-in" ></i> Login</button>
-              <button onClick={showModal1} id="btn1" className="btn btn-outline-dark ms-2">
-                <i className="fa fa-user-plus"></i> Register</button>
-              <Link to="/cart" className="btn btn-outline-dark ms-2">
-                <i className="fa fa-shopping-cart"></i> Cart (0)</Link>
+              <div className='d-flex'>
+
+                {!localStorage.getItem("token") && <> <button onClick={showModal} id="btn1" className="btn btn-outline-dark">
+                  <i className="fa fa-sign-in" ></i> Login</button>
+                  <button onClick={showModal1} id="btn1" className="btn btn-outline-dark ms-2">
+                    <i className="fa fa-user-plus"></i> Register</button></>}
+
+                {localStorage.getItem("token") && <><li className="nav-item dropdown mx-3 pt-2" style={{ listStyle: "none",marginTop:"-6px" }}>
+                  <Link className="nav-link  links dropdown-toggle" to="" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                    <i className="fa-solid fa-user nicons"></i> <span style={{fontSize:"20px"}}>{localStorage.getItem("fname")}</span>
+                  </Link>
+                  <ul className="dropdown-menu p-2" style={{ width: "257px" }}>
+                    <li onClick={changepassHandler} ><Link
+                      className="dropdown-item p-1" to="#" style={{ fontSize: "21px" }}><i className="fa-solid fa-unlock" style={{ fontSize: "21px" }}></i> Change Password</Link></li>
+
+                    <li className='logout' onClick={logoutHandler}> <Link to="#" style={{ fontSize: "21px" }}
+                      className='dropdown-item p-1'><i className="fa-solid fa-right-from-bracket" style={{ fontSize: "21px" }}></i> Logout</Link></li>
+
+
+                  </ul>
+                </li></>}
+                <Link to="/cart" className="btn btn-outline-dark ms-2">
+                  <i className="fa fa-shopping-cart"></i> Cart (0)</Link>
+              </div>
             </div>
           </div>
         </div>
@@ -184,7 +223,7 @@ const Navbar = () => {
 
                 <div className="mb-3 pt-3 ">
                   <label for="exampleInputEmail1" className="form-label " >Email address</label>
-                  <input type="email" className="form-control  border-dark" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="name@example.com" name='email' onChange={changeHandler2} value={data2.email}/>
+                  <input type="email" className="form-control  border-dark" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="name@example.com" name='email' onChange={changeHandler2} value={data2.email} />
                   <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
                 </div>
                 <div className="mb-3 pt-3 pb-3">
@@ -231,7 +270,7 @@ const Navbar = () => {
                   </div>
                   <div className="col pt-2 mb-3">
                     <label for="exampleInput" className="form-label">Last Name</label>
-                    <input type="text" name='lname' className="form-control border-dark" placeholder="Last name" aria-label="Last name" required onChange={changeHandler}  value={data.lname}/>
+                    <input type="text" name='lname' className="form-control border-dark" placeholder="Last name" aria-label="Last name" required onChange={changeHandler} value={data.lname} />
                   </div>
                 </div>
                 <div className="pt-1 pb-3">
@@ -241,11 +280,11 @@ const Navbar = () => {
                 </div>
                 <div className=" pt-1 pb-3">
                   <label for="exampleInputPassword1" className="form-label">Password</label>
-                  <input type="password" name='pass' className="form-control  border-dark" id="exampleInputPassword1" onChange={changeHandler} value={data.pass}/>
+                  <input type="password" name='pass' className="form-control  border-dark" id="exampleInputPassword1" onChange={changeHandler} value={data.pass} />
                 </div>
                 <div className="mb-3 pt-1 pb-3">
                   <label for="exampleInputPassword1" className="form-label">Confirm Password</label>
-                  <input type="password" name='cpass' className="form-control  border-dark" id="exampleInputPassword1" onChange={changeHandler} value={data.cpass}/>
+                  <input type="password" name='cpass' className="form-control  border-dark" id="exampleInputPassword1" onChange={changeHandler} value={data.cpass} />
                 </div>
                 <input type="submit" className='d-none' value="" ref={refsignup} />
               </form>
