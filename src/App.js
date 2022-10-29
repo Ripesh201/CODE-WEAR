@@ -8,12 +8,16 @@ import Product from "./components/Product";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import Register from "./components/Register";
-import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
+import "antd/dist/antd.css"; 
 import Contextprovider from "./context/Contextprovider";
+import Footer from "./components/Footer"
+import Cart from "./components/Cart";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <>
+    <main className=' bg-light-2' style={{ height: '100vh', overflowY: 'auto'}}>
       <BrowserRouter>
         <Contextprovider>
           <Navbar />
@@ -26,12 +30,16 @@ function App() {
             <Route exact path="/contact" element={<Contact />} />
             {/* <Route exact path="/login" element={<Login/>} /> */}
             <Route exact path="/register" element={<Register />} />
+            <Route exact path="/cart" element={<Cart />} />
           </Routes>
 
           {/* <About/>
     <Contact/> */}
+    <Footer></Footer>
         </Contextprovider>
+        <ToastContainer/>
       </BrowserRouter>
+      </main>
     </>
   );
 }

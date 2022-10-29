@@ -1,0 +1,7 @@
+.itembox:hover img{
+transform: scale(1.1);
+}
+.itembox img{
+    transition-property: transform;
+    transition-duration: .4s;
+}

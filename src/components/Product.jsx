@@ -16,10 +16,10 @@ const Product = () => {
     const [loading, setLoading] = useState(false);
 
 
-// const dispatch = useDispatch();
-// const addProduct = (product) =>{
-//     dispatch(addCart(product));
-// }
+    // const dispatch = useDispatch();
+    // const addProduct = (product) =>{
+    //     dispatch(addCart(product));
+    // }
 
 
     useEffect(() => {
@@ -38,19 +38,37 @@ const Product = () => {
         return (
             <>
                 <div className="col-md-6">
-                    <Skeleton height={400}/>
+                    <Skeleton height={400} />
                 </div>
-                <div className="col-md-6" style={{lineHeight:2}}>
-                    <Skeleton height={50} width={300}/>
-                    <Skeleton height={70}/>
-                    <Skeleton height={25} width={150}/>
-                    <Skeleton height={50}/>
-                    <Skeleton height={150}/>
-                    <Skeleton height={50} width={100}/>
-                    <Skeleton height={50} width={100} style={{marginLeft:6}}/>
+                <div className="col-md-6" style={{ lineHeight: 2 }}>
+                    <Skeleton height={50} width={300} />
+                    <Skeleton height={70} />
+                    <Skeleton height={25} width={150} />
+                    <Skeleton height={50} />
+                    <Skeleton height={150} />
+                    <Skeleton height={50} width={100} />
+                    <Skeleton height={50} width={100} style={{ marginLeft: 6 }} />
                 </div>
             </>
         )
+    }
+
+    const addToCart = async () => {
+        const param = {
+            userId: localStorage.getItem('userId'),
+            product: product,
+            qty: 1
+        }
+        const res = await fetch("http://localhost:5000/addToCart", {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "auth-token": localStorage.getItem("token")
+            },
+            body: JSON.stringify(param)
+        })
     }
 
     const ShowProduct = () => {
@@ -70,10 +88,10 @@ const Product = () => {
                     </p>
 
                     <h3 className='display-6 fw-bold my-4'>
-                        ${product.price}
+                        Rs.{product.price * 100}
                     </h3>
                     <p className="lead">{product.description}</p>
-                    <button className='btn btn-outline-dark px-4 py-2'>
+                    <button onClick={() => addToCart()} className='btn btn-outline-dark px-4 py-2'>
                         Add to Cart
                     </button>
                     <Link to="/cart" className='btn btn-dark ms-2 px-3 py-2'>

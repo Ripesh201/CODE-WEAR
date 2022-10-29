@@ -1,20 +1,44 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from "react-router-dom"
 import Refcon from '../context/Refcontext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dbcon from '../context/Dbcon';
+import Changepass from './Changepass';
 // navbar login button click btn ...............
 const Navbar = () => {
-  const [data, setdata] = useState({ fname: "", lname: "", email: "", pass: "", cpass: "" })
 
+  const isLogin = localStorage.getItem("userId")
+  const [data, setdata] = useState({ fname: "", lname: "", email: "", pass: "", cpass: "" })
+  const [products, setProducts] = useState([])
   const refcon = useContext(Refcon)
-  let { reflog, refreg, refsignup, refclose, refclosein, refsignin,reload,setreload } = refcon
+  let { reflog, refreg, refsignup, refclose, refclosein, refsignin, reload, setreload, refpass } = refcon
+
   const showModal = () => {
     reflog.current.click()
   };
 
 
+  useEffect(() => {
+    getCart()
+  }, [products])
+
+  useEffect(() => {
+    setreload({})
+  }, [])
+
+  const getCart = async () => {
+    const res = await fetch(`http://localhost:5000/getCart/${localStorage.getItem('userId')}`)
+      .then(response => {
+        if (!response.ok) {
+          console.log('error')
+        }
+        return response.json()
+      })
+    if (res.status) {
+      setProducts(res.data);
+    }
+  }
 
   const changeHandler = (e) => {
     setdata({ ...data, [e.target.name]: e.target.value })
@@ -37,7 +61,7 @@ const Navbar = () => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "auth-token":localStorage.getItem("token")
+        "auth-token": localStorage.getItem("token")
 
       },
       body: JSON.stringify({ fname, lname, email, pass, cpass })
@@ -78,6 +102,7 @@ const Navbar = () => {
 
   const [data2, setData2] = useState({ email: "", pass: "" })
   const subHandler2 = async (e) => {
+
     e.preventDefault();
     let { email, pass } = data2
     const res = await fetch("http://localhost:5000/auth/signin", {
@@ -86,7 +111,7 @@ const Navbar = () => {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "auth-token":localStorage.getItem("token")
+        "auth-token": localStorage.getItem("token")
       },
       body: JSON.stringify({ email, pass })
     })
@@ -133,25 +158,29 @@ const Navbar = () => {
     refsignin.current.click()
   }
 
+
+  // change pass
+  const changepassHandler = () => {
+    refpass.current.click()
+  }
   // logout
   const logoutHandler = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("userId")
     setreload({})
   }
-  const changepassHandler = () => {
 
-  }
   return (
     <div>
       <nav className="navbar navbar-expand-lg bg-white py-2 shadow-sm">
         <div className="container">
           <img src="/assets/logo1.jpg" alt="phone" height='50px' width='80px' />
-          <Link className="navbar-brand fw-bold fs-4" to="/">CodeWear</Link>
+          <Link className="navbar-brand fw-bold fs-3" to="/">CodeWear</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mx-auto mb-1 mb-lg-0">
+          <div className="collapse navbar-collapse " id="navbarSupportedContent">
+            <ul className="navbar-nav mx-auto mb-1 mb-lg-0 fs-3">
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" to="/">Home</Link>
               </li>
@@ -174,22 +203,24 @@ const Navbar = () => {
                   <button onClick={showModal1} id="btn1" className="btn btn-outline-dark ms-2">
                     <i className="fa fa-user-plus"></i> Register</button></>}
 
-                {localStorage.getItem("token") && <><li className="nav-item dropdown mx-3 pt-2" style={{ listStyle: "none",marginTop:"-6px" }}>
-                  <Link className="nav-link  links dropdown-toggle" to="" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
-                    <i className="fa-solid fa-user nicons"></i> <span style={{fontSize:"20px"}}>{localStorage.getItem("fname")}</span>
+                {localStorage.getItem("token") && <><li className="nav-item dropdown mx-3 pt-2" style={{ listStyle: "none", marginTop: "-6px", marginleft: "4px" }}>
+                  <Link className="nav-link  links dropdown-toggle  " to="" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                    <i className="fa-solid fa-user nicons " style={{ marginright: "3px" }}></i> <span style={{ fontSize: "20px" }}>{localStorage.getItem("fname")}</span>
                   </Link>
                   <ul className="dropdown-menu p-2" style={{ width: "257px" }}>
                     <li onClick={changepassHandler} ><Link
-                      className="dropdown-item p-1" to="#" style={{ fontSize: "21px" }}><i className="fa-solid fa-unlock" style={{ fontSize: "21px" }}></i> Change Password</Link></li>
+                      className="dropdown-item p-1" to="#" style={{ fontSize: "19px" }}><i className="fa-solid fa-unlock" style={{ fontSize: "19px" }} onClick={changepassHandler}></i> Change Password</Link></li>
 
-                    <li className='logout' onClick={logoutHandler}> <Link to="#" style={{ fontSize: "21px" }}
-                      className='dropdown-item p-1'><i className="fa-solid fa-right-from-bracket" style={{ fontSize: "21px" }}></i> Logout</Link></li>
+                    <li className='logout' onClick={logoutHandler}> <Link to="#" style={{ fontSize: "19px" }}
+                      className='dropdown-item p-1'><i className="fa-solid fa-right-from-bracket" style={{ fontSize: "19px" }}></i> Logout</Link></li>
 
 
                   </ul>
                 </li></>}
-                <Link to="/cart" className="btn btn-outline-dark ms-2">
-                  <i className="fa fa-shopping-cart"></i> Cart (0)</Link>
+                {(isLogin != null && isLogin != undefined && isLogin != '')&&
+                  <Link to="/cart" className="btn btn-outline-dark ms-2">
+                  <i className="fa fa-shopping-cart"></i> Cart {products.length}
+                </Link>}
               </div>
             </div>
           </div>
@@ -297,6 +328,7 @@ const Navbar = () => {
         </div>
       </div>
       <ToastContainer />
+      <Changepass />
     </div>
   )
 }

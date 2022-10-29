@@ -11,31 +11,32 @@ Heading,
 const Footer = () => {
 return (
 	<Box>
-	<h1 style={{ color: "green",
+	<h1 style={{ color: "black",
 				textAlign: "center",
-				marginTop: "-50px" }}>
-		CodeWear: You can buy products easily.. 
+				marginTop: "-50px"
+				 }}>
+		CODEWEAR 
 	</h1>
 	<Container>
 		<Row>
 		<Column>
 			<Heading>About Us</Heading>
-			<FooterLink href="#">Aim</FooterLink>
+			<FooterLink href="#">Details</FooterLink>
 			<FooterLink href="#">Vision</FooterLink>
-			<FooterLink href="#">Testimonials</FooterLink>
+			<FooterLink href="#">Staff</FooterLink>
 		</Column>
 		<Column>
 			<Heading>Services</Heading>
-			<FooterLink href="#">Writing</FooterLink>
-			<FooterLink href="#">Internships</FooterLink>
-			<FooterLink href="#">Coding</FooterLink>
-			<FooterLink href="#">Teaching</FooterLink>
+			<FooterLink href="#">Add</FooterLink>
+			<FooterLink href="#">Buy</FooterLink>
+			<FooterLink href="#">Increase</FooterLink>
+			<FooterLink href="#">Decrease</FooterLink>
 		</Column>
 		<Column>
 			<Heading>Contact Us</Heading>
-			<FooterLink href="#">Uttar Pradesh</FooterLink>
+			<FooterLink href="#">Surat</FooterLink>
 			<FooterLink href="#">Ahemdabad</FooterLink>
-			<FooterLink href="#">Indore</FooterLink>
+			<FooterLink href="#">Delhi</FooterLink>
 			<FooterLink href="#">Mumbai</FooterLink>
 		</Column>
 		<Column>
